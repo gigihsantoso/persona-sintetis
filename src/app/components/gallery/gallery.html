@@ -1,68 +1,77 @@
-<div class="max-w-7xl mx-auto p-6">
-  <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Character Gallery</h1>
-      <p class="text-gray-600 mt-1">
-        {{ filteredCharacters().length }} of {{ characters().length }} characters
-      </p>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
-      <!-- Search -->
-      <div class="relative">
-        <input
-          type="text"
-          [(ngModel)]="searchQuery"
-          placeholder="Search characters..."
-          class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
+<div class="space-y-8">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="page-title">Character Gallery</h1>
+        <p class="page-subtitle">
+          {{ filteredCharacters().length }} of {{ characters().length }} characters
+        </p>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex gap-2">
+      <div class="flex items-center gap-3">
         <button
           (click)="onGenerate()"
-          class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 flex items-center"
+          class="btn btn-accent"
         >
-          <span class="mr-1">✨</span> Generate
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+          Generate
         </button>
         <button
           (click)="onCreateNew()"
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+          class="btn btn-primary"
         >
-          <span class="mr-1">+</span> New Character
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          New Character
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <div class="card p-4">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="relative flex-1">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Search characters by name, description, or tags..."
+          class="input pl-10"
+        />
       </div>
     </div>
   </div>
 
   <!-- Character Grid -->
   @if (filteredCharacters().length === 0) {
-    <div class="text-center py-16">
-      <div class="text-6xl mb-4">🎭</div>
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">
+    <div class="empty-state card">
+      <div class="empty-state-icon">🎭</div>
+      <h3 class="empty-state-title">
         {{ searchQuery ? 'No characters found' : 'No characters yet' }}
       </h3>
-      <p class="text-gray-600 mb-6">
-        {{ searchQuery ? 'Try a different search term' : 'Create your first character or generate one with AI' }}
+      <p class="empty-state-description">
+        {{ searchQuery ? 'Try adjusting your search terms or clear filters' : 'Create your first character manually or generate one with AI' }}
       </p>
       @if (!searchQuery) {
-        <div class="flex justify-center gap-4">
-          <button
-            (click)="onCreateNew()"
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
+        <div class="flex items-center gap-3">
+          <button (click)="onCreateNew()" class="btn btn-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
             Create Character
           </button>
-          <button
-            (click)="onGenerate()"
-            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700"
-          >
-            ✨ Generate with AI
+          <button (click)="onGenerate()" class="btn btn-accent">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Generate with AI
           </button>
         </div>
       }
@@ -71,11 +80,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       @for (character of filteredCharacters(); track character.id) {
         <div
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+          class="card overflow-hidden group cursor-pointer fade-in"
           (click)="viewCharacter(character)"
         >
           <!-- Character Image -->
-          <div class="aspect-[3/4] bg-gradient-to-br from-gray-200 to-gray-300 relative overflow-hidden">
+          <div class="aspect-[3/4] bg-gradient-to-br from-[var(--color-gray-200)] to-[var(--color-gray-300)] relative overflow-hidden">
             <img
               [src]="character.imageUrl || 'https://via.placeholder.com/300x400?text=No+Image'"
               [alt]="character.name"
@@ -85,13 +94,13 @@
               <div class="absolute bottom-4 left-4 right-4 flex gap-2">
                 <button
                   (click)="editCharacter(character); $event.stopPropagation()"
-                  class="flex-1 px-3 py-2 bg-white/90 text-gray-800 rounded-lg text-sm hover:bg-white"
+                  class="flex-1 px-3 py-2 bg-white/90 text-gray-800 rounded-lg text-sm hover:bg-white backdrop-blur-sm transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   (click)="deleteCharacter(character); $event.stopPropagation()"
-                  class="px-3 py-2 bg-red-500/90 text-white rounded-lg text-sm hover:bg-red-500"
+                  class="px-3 py-2 bg-red-500/90 text-white rounded-lg text-sm hover:bg-red-500 backdrop-blur-sm transition-colors"
                   [disabled]="isDeleting()"
                 >
                   Delete
@@ -101,19 +110,21 @@
           </div>
 
           <!-- Character Info -->
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-900 truncate">{{ character.name }}</h3>
-            <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ character.description }}</p>
+          <div class="p-4 space-y-3">
+            <div>
+              <h3 class="font-semibold text-[var(--color-text)] truncate">{{ character.name }}</h3>
+              <p class="text-sm text-[var(--color-text-secondary)] mt-1 line-clamp-2">{{ character.description }}</p>
+            </div>
             
             <!-- Tags -->
-            <div class="flex flex-wrap gap-1 mt-3">
+            <div class="flex flex-wrap gap-1.5">
               @for (tag of character.tags.slice(0, 3); track tag) {
-                <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                <span class="badge badge-gray">
                   {{ tag }}
                 </span>
               }
               @if (character.tags.length > 3) {
-                <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                <span class="badge badge-gray">
                   +{{ character.tags.length - 3 }}
                 </span>
               }
@@ -127,82 +138,90 @@
   <!-- Character Preview Modal -->
   @if (selectedCharacter()) {
     <div
-      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 fade-in"
       (click)="closePreview()"
     >
       <div
-        class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        class="bg-[var(--color-surface)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl slide-up"
         (click)="$event.stopPropagation()"
       >
-        <div class="flex justify-between items-center p-6 border-b">
-          <h2 class="text-2xl font-bold text-gray-900">{{ selectedCharacter()?.name }}</h2>
+        <!-- Modal Header -->
+        <div class="sticky top-0 flex items-center justify-between p-6 border-b border-[var(--color-border)] bg-[var(--color-surface)] z-10">
+          <h2 class="text-2xl font-bold text-[var(--color-text)]">{{ selectedCharacter()?.name }}</h2>
           <button
             (click)="closePreview()"
-            class="text-gray-500 hover:text-gray-700"
+            class="p-2 rounded-lg hover:bg-[var(--color-bg-subtle)] transition-colors"
+            aria-label="Close modal"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-[var(--color-text-secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
 
-        <div class="p-6">
+        <!-- Modal Body -->
+        <div class="p-6 space-y-6">
           @if (selectedCharacter()?.imageUrl) {
-            <div class="mb-6">
+            <div class="rounded-xl overflow-hidden shadow-lg">
               <img
                 [src]="selectedCharacter()!.imageUrl!"
                 [alt]="selectedCharacter()!.name"
-                class="w-full rounded-lg shadow-md"
+                class="w-full object-cover"
               />
             </div>
           }
 
-          <div class="space-y-4">
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-1">Description</h3>
-              <p class="text-gray-700">{{ selectedCharacter()?.description }}</p>
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-1">Appearance</h3>
-              <p class="text-gray-700">{{ selectedCharacter()?.appearance }}</p>
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-1">Personality</h3>
-              <p class="text-gray-700">{{ selectedCharacter()?.personality }}</p>
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-1">Backstory</h3>
-              <p class="text-gray-700">{{ selectedCharacter()?.backstory }}</p>
-            </div>
-
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-2">Tags</h3>
-              <div class="flex flex-wrap gap-2">
-                @for (tag of selectedCharacter()?.tags; track tag) {
-                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                    {{ tag }}
-                  </span>
-                }
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-2">Description</h3>
+                <p class="text-[var(--color-text-secondary)]">{{ selectedCharacter()?.description }}</p>
               </div>
+
+              <div>
+                <h3 class="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-2">Appearance</h3>
+                <p class="text-[var(--color-text-secondary)]">{{ selectedCharacter()?.appearance }}</p>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-2">Personality</h3>
+                <p class="text-[var(--color-text-secondary)]">{{ selectedCharacter()?.personality }}</p>
+              </div>
+
+              <div>
+                <h3 class="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-2">Backstory</h3>
+                <p class="text-[var(--color-text-secondary)]">{{ selectedCharacter()?.backstory }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-sm font-semibold text-[var(--color-text)] uppercase tracking-wide mb-3">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              @for (tag of selectedCharacter()?.tags; track tag) {
+                <span class="badge badge-primary">
+                  {{ tag }}
+                </span>
+              }
             </div>
           </div>
         </div>
 
-        <div class="p-6 border-t flex justify-end gap-3">
+        <!-- Modal Footer -->
+        <div class="sticky bottom-0 flex items-center justify-end gap-3 p-6 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
           <button
             (click)="deleteCharacter(selectedCharacter()!); closePreview()"
-            class="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
+            class="btn btn-ghost text-red-600 hover:bg-red-50"
           >
             Delete
           </button>
           <button
             (click)="editCharacter(selectedCharacter()!); closePreview()"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            class="btn btn-primary"
           >
-            Edit
+            Edit Character
           </button>
         </div>
       </div>

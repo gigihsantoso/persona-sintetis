@@ -1,36 +1,55 @@
-<div class="min-h-screen bg-gray-50">
-  <!-- Navigation -->
-  <nav class="bg-white shadow-sm border-b">
+<!-- Professional SaaS AI Studio Layout -->
+<div class="min-h-screen bg-[var(--color-bg)]">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-40 glass border-b border-[var(--color-border)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <a routerLink="/" class="flex items-center space-x-2">
-            <span class="text-2xl">🎭</span>
-            <span class="font-bold text-xl text-gray-900">Character Generator</span>
-          </a>
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo & Brand -->
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary-500)] to-[var(--color-accent-500)] shadow-md">
+            <span class="text-white text-xl">🎭</span>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-[var(--color-text)] gradient-text">Persona Sintetis</h1>
+            <p class="text-xs text-[var(--color-text-tertiary)]">AI Character Studio</p>
+          </div>
         </div>
-        
-        <div class="flex items-center space-x-4">
+
+        <!-- Navigation Links -->
+        <div class="hidden md:flex items-center gap-1">
           <a
             routerLink="/gallery"
-            routerLinkActive="text-blue-600 font-semibold"
-            class="text-gray-700 hover:text-blue-600 transition-colors"
+            routerLinkActive="bg-[var(--color-primary-50)] text-[var(--color-primary-700)]"
+            class="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-all"
           >
             Gallery
           </a>
           <a
             routerLink="/generate"
-            routerLinkActive="text-blue-600 font-semibold"
-            class="text-gray-700 hover:text-blue-600 transition-colors"
+            routerLinkActive="bg-[var(--color-primary-50)] text-[var(--color-primary-700)]"
+            class="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-all"
           >
             Generate
           </a>
           <a
             routerLink="/characters/new"
-            routerLinkActive="text-blue-600 font-semibold"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            routerLinkActive="bg-[var(--color-primary-50)] text-[var(--color-primary-700)]"
+            class="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)] transition-all"
           >
-            + New Character
+            Create
+          </a>
+        </div>
+
+        <!-- Action Button -->
+        <div class="flex items-center gap-3">
+          <a
+            routerLink="/characters/new"
+            class="btn btn-primary"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span class="hidden sm:inline">New Character</span>
           </a>
         </div>
       </div>
@@ -38,16 +57,26 @@
   </nav>
 
   <!-- Main Content -->
-  <main class="py-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <router-outlet />
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white border-t mt-auto">
+  <footer class="border-t border-[var(--color-border)] mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <p class="text-center text-gray-500 text-sm">
-        © 2024 Character Generator. Built with Angular 21 + Tailwind CSS v4
-      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-[var(--color-text-tertiary)]">
+          © 2024 Persona Sintetis — Professional AI Character Studio
+        </p>
+        <div class="flex items-center gap-4 text-sm text-[var(--color-text-tertiary)]">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Powered by Angular 21 + Tailwind v4
+          </span>
+        </div>
+      </div>
     </div>
   </footer>
 </div>

@@ -1,112 +1,159 @@
-<div class="max-w-4xl mx-auto p-6">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Generate Character</h1>
-    <p class="text-gray-600 mt-1">Use AI to generate a new character based on your prompt</p>
+<div class="max-w-6xl mx-auto space-y-8">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Generate Character</h1>
+    <p class="page-subtitle">Use AI to generate a new character based on your prompt</p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Form Section -->
-    <div class="md:col-span-2">
-      <div class="bg-white rounded-lg shadow-md p-6 space-y-4">
-        <!-- Prompt -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Character Prompt *
-          </label>
-          <textarea
-            [(ngModel)]="prompt"
-            rows="4"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Describe the character you want to generate... e.g., 'A brave knight from a distant land seeking redemption'"
-          ></textarea>
-        </div>
+    <div class="lg:col-span-2 space-y-6">
+      <div class="card p-6">
+        <div class="space-y-6">
+          <!-- Prompt -->
+          <div>
+            <label class="label label-required">Character Prompt</label>
+            <textarea
+              [(ngModel)]="prompt"
+              rows="5"
+              class="input"
+              placeholder="Describe the character you want to generate... e.g., 'A brave knight from a distant land seeking redemption after a tragic mistake'"
+            ></textarea>
+            <p class="text-xs text-[var(--color-text-tertiary)] mt-1">
+              Be specific about personality, appearance, and background for best results
+            </p>
+          </div>
 
-        <!-- Style Selection -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Art Style
-          </label>
-          <select
-            [(ngModel)]="style"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            @for (s of styles; track s.value) {
-              <option [value]="s.value">{{ s.label }}</option>
+          <!-- Style Selection -->
+          <div>
+            <label class="label">Art Style</label>
+            <select
+              [(ngModel)]="style"
+              class="input"
+            >
+              @for (s of styles; track s.value) {
+                <option [value]="s.value">{{ s.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Traits -->
+          <div>
+            <label class="label">Additional Traits</label>
+            <input
+              type="text"
+              [(ngModel)]="traits"
+              class="input"
+              placeholder="e.g., brave, mysterious, magical (comma-separated)"
+            />
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-3 pt-4">
+            @if (isGenerating()) {
+              <button
+                type="button"
+                (click)="onCancel()"
+                class="btn btn-ghost text-red-600 hover:bg-red-50"
+              >
+                Cancel Generation
+              </button>
+            } @else {
+              <button
+                type="button"
+                (click)="onGenerate()"
+                [disabled]="!prompt.trim()"
+                class="btn btn-accent"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+                Generate Character
+              </button>
             }
-          </select>
+          </div>
         </div>
+      </div>
 
-        <!-- Traits -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Additional Traits (comma-separated)
-          </label>
-          <input
-            type="text"
-            [(ngModel)]="traits"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., brave, mysterious, magical"
-          />
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end space-x-4 pt-4">
-          @if (isGenerating()) {
-            <button
-              type="button"
-              (click)="onCancel()"
-              class="px-6 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
-            >
-              Cancel
-            </button>
-          } @else {
-            <button
-              type="button"
-              (click)="onGenerate()"
-              class="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700"
-            >
-              ✨ Generate Character
-            </button>
-          }
+      <!-- Tips Card -->
+      <div class="bg-gradient-to-br from-[var(--color-accent-50)] to-[var(--color-primary-50)] dark:from-[var(--color-accent-900)]/20 dark:to-[var(--color-primary-900)]/20 rounded-xl p-6">
+        <div class="flex items-start gap-3">
+          <svg class="w-6 h-6 text-[var(--color-accent-600)] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+          <div>
+            <h3 class="font-semibold text-[var(--color-accent-800)] dark:text-[var(--color-accent-300)] mb-2">AI Generation Tips</h3>
+            <ul class="text-sm text-[var(--color-accent-700)] dark:text-[var(--color-accent-400)] space-y-1">
+              <li>• Include specific details about personality and appearance</li>
+              <li>• Mention the character's role or profession</li>
+              <li>• Add unique traits or quirks to make them memorable</li>
+              <li>• Specify the setting or world they belong to</li>
+              <li>• The more detailed your prompt, the better the result</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Preview Section -->
-    <div class="md:col-span-1">
-      <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Generation Status</h3>
+    <div class="lg:col-span-1">
+      <div class="card p-6 sticky top-24">
+        <h3 class="text-lg font-semibold text-[var(--color-text)] mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-[var(--color-text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Generation Status
+        </h3>
         
         @if (!currentGeneration()) {
-          <div class="text-center py-8 text-gray-500">
-            <div class="text-4xl mb-2">🎨</div>
-            <p>Enter a prompt to start generating</p>
+          <div class="text-center py-8 text-[var(--color-text-tertiary)]">
+            <div class="text-5xl mb-4">🎨</div>
+            <p class="text-sm">Enter a prompt to start generating your character</p>
           </div>
         } @else if (currentGeneration()?.status === 'pending' || currentGeneration()?.status === 'processing') {
-          <div class="text-center py-8">
-            <div class="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p class="text-gray-700 font-medium">
-              {{ currentGeneration()?.status === 'pending' ? 'Starting...' : 'Generating...' }}
-            </p>
-            <div class="mt-4 bg-gray-200 rounded-full h-2">
+          <div class="text-center py-8 space-y-4">
+            <div class="relative w-16 h-16 mx-auto">
+              <div class="absolute inset-0 rounded-full border-4 border-[var(--color-gray-200)]"></div>
               <div 
-                class="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                [style.width.%]="currentGeneration()?.progress || 0"
+                class="absolute inset-0 rounded-full border-4 border-[var(--color-accent-500)] border-t-transparent animate-spin"
               ></div>
             </div>
-            <p class="text-sm text-gray-500 mt-2">{{ currentGeneration()?.progress }}% complete</p>
+            <div>
+              <p class="font-medium text-[var(--color-text)]">
+                {{ currentGeneration()?.status === 'pending' ? 'Starting...' : 'Generating...' }}
+              </p>
+              <p class="text-sm text-[var(--color-text-tertiary)] mt-1">
+                Our AI is crafting your character
+              </p>
+            </div>
+            <div class="space-y-2">
+              <div class="h-2 bg-[var(--color-gray-200)] rounded-full overflow-hidden">
+                <div 
+                  class="h-full bg-gradient-to-r from-[var(--color-accent-500)] to-[var(--color-primary-500)] transition-all duration-300"
+                  [style.width.%]="currentGeneration()?.progress || 0"
+                ></div>
+              </div>
+              <p class="text-xs text-[var(--color-text-tertiary)]">{{ currentGeneration()?.progress }}% complete</p>
+            </div>
           </div>
         } @else if (currentGeneration()?.status === 'completed') {
-          <div class="text-center py-8">
-            <div class="text-4xl mb-2">✅</div>
-            <p class="text-green-600 font-medium">Generation Complete!</p>
-            <p class="text-sm text-gray-500 mt-2">Redirecting to gallery...</p>
+          <div class="text-center py-8 space-y-4">
+            <div class="text-5xl">✅</div>
+            <div>
+              <p class="font-medium text-[var(--color-success-600)]">Generation Complete!</p>
+              <p class="text-sm text-[var(--color-text-tertiary)] mt-1">Redirecting to gallery...</p>
+            </div>
           </div>
         } @else if (currentGeneration()?.status === 'failed') {
-          <div class="text-center py-8">
-            <div class="text-4xl mb-2">❌</div>
-            <p class="text-red-600 font-medium">Generation Failed</p>
-            <p class="text-sm text-gray-500 mt-2">{{ currentGeneration()?.error }}</p>
+          <div class="text-center py-8 space-y-4">
+            <div class="text-5xl">❌</div>
+            <div>
+              <p class="font-medium text-[var(--color-danger-600)]">Generation Failed</p>
+              <p class="text-sm text-[var(--color-text-tertiary)] mt-1">{{ currentGeneration()?.error }}</p>
+            </div>
+            <button (click)="onCancel()" class="btn btn-secondary">
+              Try Again
+            </button>
           </div>
         }
       </div>
