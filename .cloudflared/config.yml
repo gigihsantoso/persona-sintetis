@@ -1,0 +1,28 @@
+# Cloudflare Tunnel Configuration for Local Development
+# Domain: app.pesonasintetis.xyz
+# Target: localhost:4300
+
+tunnel: persona-sintetis-tunnel
+credentials-file: C:/Users/gigih/.cloudflared/credentials.json
+
+ingress:
+  # Health check endpoints (public)
+  - hostname: app.pesonasintetis.xyz
+    path: /health
+    service: http://localhost:4300
+  - hostname: app.pesonasintetis.xyz
+    path: /ready
+    service: http://localhost:4300
+  - hostname: app.pesonasintetis.xyz
+    path: /metrics
+    service: http://localhost:4300
+    
+  # Main application
+  - hostname: app.pesonasintetis.xyz
+    service: http://localhost:4300
+    
+  # Catch-all 404
+  - service: http_status:404
+
+# Logging configuration
+loglevel: info

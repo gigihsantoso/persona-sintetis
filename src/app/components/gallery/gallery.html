@@ -1,0 +1,211 @@
+<div class="max-w-7xl mx-auto p-6">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Character Gallery</h1>
+      <p class="text-gray-600 mt-1">
+        {{ filteredCharacters().length }} of {{ characters().length }} characters
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
+      <!-- Search -->
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Search characters..."
+          class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <button
+          (click)="onGenerate()"
+          class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 flex items-center"
+        >
+          <span class="mr-1">✨</span> Generate
+        </button>
+        <button
+          (click)="onCreateNew()"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+        >
+          <span class="mr-1">+</span> New Character
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Grid -->
+  @if (filteredCharacters().length === 0) {
+    <div class="text-center py-16">
+      <div class="text-6xl mb-4">🎭</div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">
+        {{ searchQuery ? 'No characters found' : 'No characters yet' }}
+      </h3>
+      <p class="text-gray-600 mb-6">
+        {{ searchQuery ? 'Try a different search term' : 'Create your first character or generate one with AI' }}
+      </p>
+      @if (!searchQuery) {
+        <div class="flex justify-center gap-4">
+          <button
+            (click)="onCreateNew()"
+            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Create Character
+          </button>
+          <button
+            (click)="onGenerate()"
+            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700"
+          >
+            ✨ Generate with AI
+          </button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (character of filteredCharacters(); track character.id) {
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+          (click)="viewCharacter(character)"
+        >
+          <!-- Character Image -->
+          <div class="aspect-[3/4] bg-gradient-to-br from-gray-200 to-gray-300 relative overflow-hidden">
+            <img
+              [src]="character.imageUrl || 'https://via.placeholder.com/300x400?text=No+Image'"
+              [alt]="character.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="absolute bottom-4 left-4 right-4 flex gap-2">
+                <button
+                  (click)="editCharacter(character); $event.stopPropagation()"
+                  class="flex-1 px-3 py-2 bg-white/90 text-gray-800 rounded-lg text-sm hover:bg-white"
+                >
+                  Edit
+                </button>
+                <button
+                  (click)="deleteCharacter(character); $event.stopPropagation()"
+                  class="px-3 py-2 bg-red-500/90 text-white rounded-lg text-sm hover:bg-red-500"
+                  [disabled]="isDeleting()"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Character Info -->
+          <div class="p-4">
+            <h3 class="font-semibold text-gray-900 truncate">{{ character.name }}</h3>
+            <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ character.description }}</p>
+            
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1 mt-3">
+              @for (tag of character.tags.slice(0, 3); track tag) {
+                <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                  {{ tag }}
+                </span>
+              }
+              @if (character.tags.length > 3) {
+                <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                  +{{ character.tags.length - 3 }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Character Preview Modal -->
+  @if (selectedCharacter()) {
+    <div
+      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      (click)="closePreview()"
+    >
+      <div
+        class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex justify-between items-center p-6 border-b">
+          <h2 class="text-2xl font-bold text-gray-900">{{ selectedCharacter()?.name }}</h2>
+          <button
+            (click)="closePreview()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6">
+          @if (selectedCharacter()?.imageUrl) {
+            <div class="mb-6">
+              <img
+                [src]="selectedCharacter()!.imageUrl!"
+                [alt]="selectedCharacter()!.name"
+                class="w-full rounded-lg shadow-md"
+              />
+            </div>
+          }
+
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Description</h3>
+              <p class="text-gray-700">{{ selectedCharacter()?.description }}</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Appearance</h3>
+              <p class="text-gray-700">{{ selectedCharacter()?.appearance }}</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Personality</h3>
+              <p class="text-gray-700">{{ selectedCharacter()?.personality }}</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">Backstory</h3>
+              <p class="text-gray-700">{{ selectedCharacter()?.backstory }}</p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-2">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                @for (tag of selectedCharacter()?.tags; track tag) {
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                    {{ tag }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 border-t flex justify-end gap-3">
+          <button
+            (click)="deleteCharacter(selectedCharacter()!); closePreview()"
+            class="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
+          >
+            Delete
+          </button>
+          <button
+            (click)="editCharacter(selectedCharacter()!); closePreview()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,32 @@
+# Cloudflare Tunnel Configuration
+# Domain: app.pesonasintetis.xyz
+# Target: localhost:4300
+
+tunnel: persona-sintetis-tunnel
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Health check endpoints (public)
+  - hostname: app.pesonasintetis.xyz
+    path: /health
+    service: http://localhost:4300
+  - hostname: app.pesonasintetis.xyz
+    path: /ready
+    service: http://localhost:4300
+  - hostname: app.pesonasintetis.xyz
+    path: /metrics
+    service: http://localhost:4300
+    
+  # Main application
+  - hostname: app.pesonasintetis.xyz
+    service: http://localhost:4300
+    
+  # Catch-all 404
+  - service: http_status:404
+
+# Logging configuration
+loglevel: info
+logfile: /var/log/cloudflared/tunnel.log
+
+# No metrics server for now (can enable if needed)
+# metrics: 127.0.0.1:2000
