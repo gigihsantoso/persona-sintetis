@@ -1,0 +1,37 @@
+name = "character-consistency-api"
+main = "src/worker.ts"
+compatibility_date = "2024-06-23"
+node_compat = true
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+MAX_FILE_SIZE = "10485760"
+DEFAULT_CONSISTENCY_STRENGTH = "0.8"
+REFERENCE_IMAGES_BUCKET = "reference-images"
+GENERATED_IMAGES_BUCKET = "generated-images"
+
+# AI Gateway Configuration
+[ai]
+binding = "AI"
+
+# Supabase Configuration
+# These should be set via wrangler secret or environment
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+
+# Development configuration
+[dev]
+port = 8787
+local_protocol = "http"
+
+# Production routes (update with your actual domain)
+# [[routes]]
+# pattern = "api.personasintetis.com/v1/*"
+# zone_name = "personasintetis.com"
+
+# Enable observability
+[observability]
+enabled = true
+head_sampling_rate = 1.0

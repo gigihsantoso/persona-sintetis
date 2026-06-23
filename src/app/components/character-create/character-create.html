@@ -1,0 +1,213 @@
+<div class="max-w-3xl mx-auto space-y-8">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Create New Character</h1>
+    <p class="page-subtitle">Upload a character reference image to maintain consistency across generations</p>
+  </div>
+
+  <!-- Error Alert -->
+  @if (error()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-start gap-3">
+      <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Error</h3>
+        <p class="text-sm text-red-700 dark:text-red-400 mt-1">{{ error() }}</p>
+      </div>
+    </div>
+  }
+
+  <form (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Image Upload Card -->
+    <div class="card p-6">
+      <h3 class="text-lg font-semibold text-[var(--color-text)] mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-[var(--color-primary-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Character Image
+      </h3>
+
+      @if (!previewUrl()) {
+        <!-- Upload Area -->
+        <div
+          class="border-2 border-dashed rounded-xl p-8 text-center transition-colors"
+          [class.border-primary-500]="dragOver()"
+          [class.bg-primary-50]="dragOver()"
+          [class.border-gray-300]="!dragOver()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+        >
+          <input
+            type="file"
+            id="fileInput"
+            class="hidden"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onFileSelect($event)"
+          />
+          
+          <div class="flex flex-col items-center">
+            <div class="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4">
+              <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+            </div>
+            
+            <p class="text-[var(--color-text)] font-medium mb-1">
+              Drag & drop image here
+            </p>
+            <p class="text-sm text-[var(--color-text-tertiary)] mb-4">
+              or click to browse
+            </p>
+            
+            <button
+              type="button"
+              (click)="document.getElementById('fileInput')?.click()"
+              class="btn btn-secondary"
+            >
+              Choose File
+            </button>
+            
+            <p class="text-xs text-[var(--color-text-tertiary)] mt-4">
+              Supported formats: JPG, PNG, WebP • Max size: 10MB
+            </p>
+          </div>
+        </div>
+      } @else {
+        <!-- Preview Area -->
+        <div class="relative">
+          <div class="aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img
+              [src]="previewUrl()"
+              alt="Preview"
+              class="w-full h-full object-contain"
+            />
+          </div>
+          
+          <div class="flex items-center justify-between mt-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <span class="text-sm text-[var(--color-text-secondary)]">{{ getFileName() }}</span>
+            </div>
+            <button
+              type="button"
+              (click)="removeImage()"
+              class="text-sm text-red-600 hover:text-red-700 font-medium"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Character Details Card -->
+    <div class="card p-6">
+      <h3 class="text-lg font-semibold text-[var(--color-text)] mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-[var(--color-primary-500)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        Character Details
+      </h3>
+
+      <div class="space-y-4">
+        <!-- Name -->
+        <div>
+          <label for="name" class="label label-required">Character Name</label>
+          <input
+            type="text"
+            id="name"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            class="input"
+            placeholder="e.g., Aria Stormwind"
+            required
+          />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="label">Description</label>
+          <textarea
+            id="description"
+            [ngModel]="description()"
+            (ngModelChange)="description.set($event)"
+            rows="4"
+            class="input"
+            placeholder="Describe your character's role, background, or purpose..."
+          ></textarea>
+          <p class="text-xs text-[var(--color-text-tertiary)] mt-1">
+            Optional: Add context about your character for better organization
+          </p>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <label for="tags" class="label">Tags</label>
+          <input
+            type="text"
+            id="tags"
+            [ngModel]="tags()"
+            (ngModelChange)="tags.set($event)"
+            class="input"
+            placeholder="e.g., female, warrior, fantasy, protagonist"
+          />
+          <p class="text-xs text-[var(--color-text-tertiary)] mt-1">
+            Comma-separated tags to help organize and search your characters
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center justify-end gap-3 pt-4">
+      <button
+        type="button"
+        (click)="cancel()"
+        class="btn btn-ghost"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="isSubmitting() || !name().trim() || !selectedFile()"
+        class="btn btn-primary"
+      >
+        @if (isSubmitting()) {
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          Saving...
+        } @else {
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Save Character
+        }
+      </button>
+    </div>
+  </form>
+
+  <!-- Info Card -->
+  <div class="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 rounded-xl p-6">
+    <div class="flex items-start gap-3">
+      <svg class="w-6 h-6 text-primary-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <h3 class="font-semibold text-primary-800 dark:text-primary-300 mb-2">Tips for Best Results</h3>
+        <ul class="text-sm text-primary-700 dark:text-primary-400 space-y-1">
+          <li>• Use clear, high-quality images with good lighting</li>
+          <li>• Front-facing or 3/4 angle portraits work best</li>
+          <li>• Avoid heavily filtered or stylized images</li>
+          <li>• Images with simple backgrounds help the AI focus on the character</li>
+          <li>• The character should be the main subject of the image</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

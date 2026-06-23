@@ -1,0 +1,171 @@
+<div class="relative">
+  <!-- Selector Button -->
+  <div class="space-y-1">
+    <label class="label">Character Reference (Optional)</label>
+    <button
+      type="button"
+      (click)="toggleOpen()"
+      class="w-full input text-left flex items-center justify-between"
+      [class.border-primary-500]="isOpen()"
+    >
+      @if (selectedCharacter()) {
+        <div class="flex items-center gap-3">
+          <img
+            [src]="selectedCharacter()?.imageUrl || 'https://via.placeholder.com/40x40?text=?'"
+            [alt]="selectedCharacter()?.name"
+            class="w-10 h-10 rounded-lg object-cover"
+          />
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-[var(--color-text)] truncate">
+              {{ selectedCharacter()?.name }}
+            </p>
+            @if (selectedCharacter()?.tags && selectedCharacter()?.tags?.length > 0) {
+              <p class="text-xs text-[var(--color-text-tertiary)] truncate">
+                {{ selectedCharacter()?.tags?.slice(0, 2).join(', ') }}
+              </p>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="flex items-center gap-3 text-[var(--color-text-tertiary)]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          <span>Select a character from your library</span>
+        </div>
+      }
+      <svg 
+        class="w-5 h-5 text-[var(--color-text-tertiary)] transition-transform"
+        [class.rotate-180]="isOpen()"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Dropdown Panel -->
+  @if (isOpen()) {
+    <div 
+      class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+      (click)="onBackdropClick($event)"
+    ></div>
+    
+    <div class="absolute top-full left-0 right-0 mt-2 z-50 card shadow-xl max-h-96 overflow-hidden flex flex-col">
+      <!-- Search Bar -->
+      <div class="p-3 border-b border-[var(--color-border)] flex items-center gap-2 flex-shrink-0">
+        <svg class="w-5 h-5 text-[var(--color-text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          class="flex-1 bg-transparent outline-none text-sm"
+          placeholder="Search characters..."
+          autofocus
+        />
+        @if (searchQuery()) {
+          <button
+            type="button"
+            (click)="searchQuery.set('')"
+            class="text-[var(--color-text-tertiary)] hover:text-[var(--color-text)]"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        }
+      </div>
+
+      <!-- Character List -->
+      <div class="overflow-y-auto flex-1 p-2">
+        @if (isLoading()) {
+          <div class="flex items-center justify-center py-8">
+            <svg class="w-6 h-6 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          </div>
+        } @else if (filteredCharacters().length === 0) {
+          @if (characters().length === 0) {
+            <div class="text-center py-8">
+              <div class="text-4xl mb-2">📚</div>
+              <p class="text-sm text-[var(--color-text-secondary)] mb-3">No characters yet</p>
+              <button
+                type="button"
+                (click)="onManageCharacters()"
+                class="btn btn-primary btn-sm"
+              >
+                Create Character
+              </button>
+            </div>
+          } @else {
+            <div class="text-center py-8">
+              <div class="text-4xl mb-2">🔍</div>
+              <p class="text-sm text-[var(--color-text-secondary)]">No characters found</p>
+            </div>
+          }
+        } @else {
+          <div class="space-y-1">
+            @for (character of filteredCharacters(); track character.id) {
+              <button
+                type="button"
+                (click)="selectCharacter(character)"
+                class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--color-bg-subtle)] transition-colors"
+                [class.bg-primary-50]="selectedCharacterId() === character.id"
+              >
+                <img
+                  [src]="character.imageUrl || 'https://via.placeholder.com/40x40?text=?'"
+                  [alt]="character.name"
+                  class="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                />
+                <div class="flex-1 min-w-0 text-left">
+                  <p class="font-medium text-sm text-[var(--color-text)] truncate">
+                    {{ character.name }}
+                  </p>
+                  @if (character.tags && character.tags.length > 0) {
+                    <p class="text-xs text-[var(--color-text-tertiary)] truncate">
+                      {{ character.tags.slice(0, 3).join(', ') }}
+                    </p>
+                  }
+                </div>
+                @if (selectedCharacterId() === character.id) {
+                  <svg class="w-5 h-5 text-primary-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="p-3 border-t border-[var(--color-border)] flex items-center justify-between flex-shrink-0">
+        @if (selectedCharacter()) {
+          <button
+            type="button"
+            (click)="clearSelection()"
+            class="text-sm text-red-600 hover:text-red-700 font-medium"
+          >
+            Clear Selection
+          </button>
+        } @else {
+          <span class="text-xs text-[var(--color-text-tertiary)]">
+            {{ filteredCharacters().length }} characters
+          </span>
+        }
+        <button
+          type="button"
+          (click)="onManageCharacters()"
+          class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+        >
+          Manage Library →
+        </button>
+      </div>
+    </div>
+  }
+</div>

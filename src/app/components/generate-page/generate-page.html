@@ -10,11 +10,79 @@
     <div class="lg:col-span-2 space-y-6">
       <div class="card p-6">
         <div class="space-y-6">
+          <!-- Character Selector -->
+          <app-character-selector
+            [selectedCharacterId]="selectedCharacter()?.id || null"
+            (characterSelected)="onCharacterSelected($event)"
+            (manageCharacters)="onManageCharacters()"
+          ></app-character-selector>
+
+          <!-- Selected Character Preview -->
+          @if (selectedCharacter()) {
+            <div class="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 border border-primary-200 dark:border-primary-800">
+              <div class="flex items-start gap-4">
+                <img
+                  [src]="selectedCharacter()?.imageUrl || 'https://via.placeholder.com/80x80?text=?'"
+                  [alt]="selectedCharacter()?.name"
+                  class="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-semibold text-[var(--color-text)]">{{ selectedCharacter()?.name }}</h4>
+                  <p class="text-sm text-[var(--color-text-secondary)] mt-1 line-clamp-2">
+                    {{ selectedCharacter()?.description }}
+                  </p>
+                  @if (selectedCharacter()?.tags && selectedCharacter()?.tags?.length > 0) {
+                    <div class="flex flex-wrap gap-1 mt-2">
+                      @for (tag of selectedCharacter()?.tags?.slice(0, 4); track tag) {
+                        <span class="badge badge-primary text-xs">{{ tag }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Consistency Strength Slider (only when character is selected) -->
+          @if (selectedCharacter()) {
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="label">Consistency Strength</label>
+                <span 
+                  class="text-sm font-medium px-2 py-1 rounded"
+                  [style.background-color]="getStrengthColor()"
+                  [style.color]="'white'"
+                >
+                  {{ getStrengthLabel() }} ({{ consistencyStrength() | number:'1.2' }})
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0.5"
+                max="1.0"
+                step="0.05"
+                [ngModel]="consistencyStrength()"
+                (ngModelChange)="consistencyStrength.set($event)"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                [style.background]="'linear-gradient(to right, var(--color-primary-500) ' + (consistencyStrength() - 0.5) * 200 + '%, var(--color-gray-200) ' + (consistencyStrength() - 0.5) * 200 + '%)'"
+              />
+              <div class="flex justify-between mt-1 text-xs text-[var(--color-text-tertiary)]">
+                <span>More Creative (0.5)</span>
+                <span>More Consistent (1.0)</span>
+              </div>
+              <p class="text-xs text-[var(--color-text-tertiary)] mt-2">
+                Higher values produce characters more similar to your reference, but with less creative variation.
+                Lower values allow more creative freedom while maintaining some character traits.
+              </p>
+            </div>
+          }
+
           <!-- Prompt -->
           <div>
             <label class="label label-required">Character Prompt</label>
             <textarea
-              [(ngModel)]="prompt"
+              [ngModel]="prompt()"
+              (ngModelChange)="prompt.set($event)"
               rows="5"
               class="input"
               placeholder="Describe the character you want to generate... e.g., 'A brave knight from a distant land seeking redemption after a tragic mistake'"
@@ -28,7 +96,8 @@
           <div>
             <label class="label">Art Style</label>
             <select
-              [(ngModel)]="style"
+              [ngModel]="style()"
+              (ngModelChange)="style.set($event)"
               class="input"
             >
               @for (s of styles; track s.value) {
@@ -42,7 +111,8 @@
             <label class="label">Additional Traits</label>
             <input
               type="text"
-              [(ngModel)]="traits"
+              [ngModel]="traits()"
+              (ngModelChange)="traits.set($event)"
               class="input"
               placeholder="e.g., brave, mysterious, magical (comma-separated)"
             />
@@ -62,7 +132,7 @@
               <button
                 type="button"
                 (click)="onGenerate()"
-                [disabled]="!prompt.trim()"
+                [disabled]="!prompt().trim()"
                 class="btn btn-accent"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

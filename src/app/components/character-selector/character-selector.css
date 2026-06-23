@@ -1,0 +1,125 @@
+/* Character Selector Component Styles */
+
+:host {
+  display: block;
+  position: relative;
+}
+
+/* Dropdown Panel Positioning */
+.absolute.top-full {
+  min-width: 320px;
+  max-width: 400px;
+}
+
+/* Scrollbar Styling */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-300) var(--color-bg-subtle);
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-full);
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: var(--radius-full);
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* Character Item Hover */
+button[role="option"]:hover,
+button.w-full.flex.items-center:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+/* Selected Item */
+.bg-primary-50 {
+  background-color: var(--color-primary-50);
+}
+
+.dark .bg-primary-50 {
+  background-color: var(--color-primary-900) / 0.2;
+}
+
+/* Button Transitions */
+button {
+  transition: all var(--duration-fast) var(--ease-default);
+}
+
+/* Chevron Rotation */
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Input Focus */
+input:focus {
+  outline: none;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .absolute.top-full {
+    left: 0;
+    right: 0;
+    max-height: 60vh;
+  }
+}
+
+/* Loading Animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Backdrop Animation */
+.fixed.inset-0 {
+  animation: fadeIn 0.2s var(--ease-default);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Panel Animation */
+.card.shadow-xl {
+  animation: slideDown 0.2s var(--ease-default);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button Size Variant */
+.btn-sm {
+  padding: var(--space-1\.5) var(--space-3);
+  font-size: 0.75rem;
+}

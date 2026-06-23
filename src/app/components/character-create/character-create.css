@@ -1,0 +1,98 @@
+/* Character Create Component Styles */
+
+:host {
+  display: block;
+  padding: var(--space-6);
+}
+
+/* Upload Area */
+.border-dashed {
+  border-color: var(--color-gray-300);
+  transition: all var(--duration-fast) var(--ease-default);
+}
+
+.border-dashed:hover {
+  border-color: var(--color-primary-400);
+  background-color: var(--color-primary-50);
+}
+
+/* Dark mode border color */
+.dark .border-dashed {
+  border-color: var(--color-gray-600);
+}
+
+.dark .border-dashed:hover {
+  border-color: var(--color-primary-500);
+}
+
+/* Preview Container */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+/* Form Layout */
+.space-y-6 {
+  > * + * {
+    margin-top: var(--space-6);
+  }
+}
+
+/* Button States */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Info Card */
+.bg-gradient-to-br {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-accent-50) 100%
+  );
+}
+
+.dark .bg-gradient-to-br {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-900) / 0.2 0%,
+    var(--color-accent-900) / 0.2 100%
+  );
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  :host {
+    padding: var(--space-4);
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+}
+
+/* Loading Spinner */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* File Input Focus */
+input[type="file"]:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Textarea Resize */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
