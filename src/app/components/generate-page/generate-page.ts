@@ -98,10 +98,13 @@ export class GeneratePageComponent {
 
   private pollGeneration(id: string): void {
     const checkStatus = () => {
-      const gen = this.generationService.getGeneration(id);
+      // Check local cache first
+      const allGens = this.generationService.generations();
+      const gen = allGens.find(g => g.id === id);
+      
       if (gen) {
         this.currentGeneration.set(gen);
-        if (gen.status === 'completed' && gen.character) {
+        if (gen.status === 'completed') {
           this.isGenerating.set(false);
           // Navigate to gallery after completion
           setTimeout(() => {
@@ -116,10 +119,8 @@ export class GeneratePageComponent {
   }
 
   onCancel(): void {
-    if (this.currentGeneration()) {
-      this.generationService.cancelGeneration(this.currentGeneration()!.id);
-      this.isGenerating.set(false);
-      this.currentGeneration.set(null);
-    }
+    // Cancel is not supported in API, just reset state
+    this.isGenerating.set(false);
+    this.currentGeneration.set(null);
   }
 }
